@@ -171,7 +171,9 @@ def generate_context():
     ai = AIClient()
 
     system_prompt = (
-        "You are Claude, serving as an expert research analyst and debate insight provider. "
+        "You are Grok, serving as an expert research analyst and debate insight provider. "
+        "You have access to real-time information — use it to provide the most current facts, "
+        "recent developments, and up-to-date data available. "
         "Your goal is to prepare comprehensive, balanced, and factual background context "
         "so that all AI debaters can engage with the topic at a high level. "
         "Be precise, neutral, and concrete. Do not argue a position."
@@ -207,7 +209,7 @@ Keep the total under 650 words. Be precise, evidence-grounded, and balanced."""
 
     def stream_context():
         try:
-            for chunk in ai.stream("claude", prompt, system_prompt=system_prompt):
+            for chunk in ai.stream("grok", prompt, system_prompt=system_prompt):
                 yield f"data: {json.dumps({'type': 'chunk', 'text': chunk})}\n\n"
         except Exception as exc:
             yield f"data: {json.dumps({'type': 'error', 'text': str(exc)})}\n\n"
