@@ -48,7 +48,6 @@ def create_session():
         debaters=debaters,
         topic=topic,
         context=data.get("context", ""),
-        max_rounds=int(data.get("rounds", 2)),
         event_queue=q,
     )
 
@@ -66,7 +65,6 @@ def session_status(session_id):
     return jsonify({
         "phase": manager.phase,
         "current_round": manager.current_round,
-        "max_rounds": manager.max_rounds,
         "debaters": manager.debaters,
     })
 
@@ -87,7 +85,6 @@ def stream_events(session_id):
                 if event.get("type") == "debate_ended":
                     break
             except queue.Empty:
-                # heartbeat to keep connection alive
                 yield 'data: {"type":"heartbeat"}\n\n'
 
     return Response(
@@ -122,10 +119,11 @@ def run_round(session_id):
         return jsonify({"error": "Session not found"}), 404
     if manager.is_busy:
         return jsonify({"error": "Session is busy"}), 409
-    if manager.current_round >= manager.max_rounds:
-        return jsonify({"error": "Maximum rounds reached"}), 400
 
-    threading.Thread(target=manager.run_round, daemon=True).start()
+    data = request.get_json(force=True) or {}
+    plan = (data.get("plan") or "").strip()
+
+    threading.Thread(target=manager.run_round, args=(plan,), daemon=True).start()
     return jsonify({"status": "started"})
 
 

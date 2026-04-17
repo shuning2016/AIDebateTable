@@ -13,7 +13,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* Shopee brand colours */
   --bg:        #FFF5F3;
   --surface:   #FFFFFF;
   --surface2:  #FFF0ED;
@@ -24,14 +23,14 @@
   --accent:    #EE4D2D;
   --accent-h:  #D0391A;
 
-  /* Speaker palette — all within Shopee extended range */
-  --facilitator: #FCCD34;
-  --grok:        #7B61FF;
-  --claude:      #F05025;
-  --gpt:         #0080C6;
-  --gemini:      #00A651;
-  --moderator:   #172B4D;
-  --summary:     #0080C6;
+  --facilitator:    #FCCD34;
+  --round-summary:  #9B59B6;
+  --grok:           #7B61FF;
+  --claude:         #F05025;
+  --gpt:            #0080C6;
+  --gemini:         #00A651;
+  --moderator:      #172B4D;
+  --summary:        #0080C6;
 
   --radius:    12px;
   --radius-sm: 8px;
@@ -67,7 +66,6 @@ header {
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
-  /* Shopee orange gradient strip at the very top */
   border-top: 3px solid transparent;
   background-clip: padding-box;
   position: sticky;
@@ -166,7 +164,6 @@ main {
   overflow: hidden;
 }
 
-/* Hero band at top of setup card */
 .setup-hero {
   background: linear-gradient(135deg, #EE4D2D 0%, #F05025 70%, #FF6B45 100%);
   padding: 28px 36px 24px;
@@ -287,27 +284,6 @@ select:focus {
 
 textarea { resize: vertical; min-height: 80px; }
 
-.rounds-group { display: flex; gap: 8px; }
-.round-btn {
-  flex: 1;
-  padding: 9px;
-  background: var(--bg);
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--muted);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-family: inherit;
-}
-.round-btn:hover { border-color: var(--border2); color: var(--text); }
-.round-btn.active {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: rgba(238,77,45,.08);
-}
-
 /* ── Buttons ────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
@@ -359,6 +335,16 @@ textarea { resize: vertical; min-height: 80px; }
 .btn-success:not(:disabled):hover {
   background: #D0F2E0;
   border-color: #00A651;
+}
+
+.btn-purple {
+  background: rgba(155,89,182,.12);
+  color: #7D3C98;
+  border: 1.5px solid rgba(155,89,182,.30);
+}
+.btn-purple:not(:disabled):hover {
+  background: rgba(155,89,182,.20);
+  border-color: rgba(155,89,182,.50);
 }
 
 .btn-lg {
@@ -429,13 +415,14 @@ textarea { resize: vertical; min-height: 80px; }
   opacity: 0.8;
 }
 
-.badge-facilitator { background: rgba(252,205,52,.18); color: #B8870A; }
-.badge-grok        { background: rgba(123,97,255,.14);  color: #5B41E0; }
-.badge-claude      { background: rgba(240,80,37,.14);   color: #C63412; }
-.badge-gpt         { background: rgba(0,128,198,.14);   color: #0068A8; }
-.badge-gemini      { background: rgba(0,166,81,.14);    color: #007A3C; }
-.badge-moderator   { background: rgba(23,43,77,.12);    color: #172B4D; }
-.badge-summary     { background: rgba(0,128,198,.14);   color: #0068A8; }
+.badge-facilitator    { background: rgba(252,205,52,.18);  color: #B8870A; }
+.badge-round-summary  { background: rgba(155,89,182,.14);  color: #7D3C98; }
+.badge-grok           { background: rgba(123,97,255,.14);  color: #5B41E0; }
+.badge-claude         { background: rgba(240,80,37,.14);   color: #C63412; }
+.badge-gpt            { background: rgba(0,128,198,.14);   color: #0068A8; }
+.badge-gemini         { background: rgba(0,166,81,.14);    color: #007A3C; }
+.badge-moderator      { background: rgba(23,43,77,.12);    color: #172B4D; }
+.badge-summary        { background: rgba(0,128,198,.14);   color: #0068A8; }
 
 .round-tag {
   font-size: 11px;
@@ -485,6 +472,11 @@ textarea { resize: vertical; min-height: 80px; }
   border-color: rgba(0,128,198,.25);
   border-left: 3px solid var(--summary);
 }
+.bubble.bubble-round_summary .bubble-body {
+  background: rgba(155,89,182,.04);
+  border-color: rgba(155,89,182,.20);
+  border-left: 3px solid var(--round-summary);
+}
 
 /* Markdown inside bubbles */
 .bubble-body h1, .bubble-body h2, .bubble-body h3 {
@@ -510,7 +502,6 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .bubble-body hr { border: none; border-top: 1px solid var(--border); margin: 12px 0; }
 
-/* User bubble — invert text colours for dark background */
 .bubble.bubble-user-input .bubble-body strong,
 .bubble.bubble-user-input .bubble-body em,
 .bubble.bubble-user-input .bubble-body h2,
@@ -546,6 +537,67 @@ textarea { resize: vertical; min-height: 80px; }
   flex: 1;
   height: 1px;
   background: var(--border);
+}
+
+/* ── Round review bar ────────────────────────────────────────────────────── */
+#round-review-bar {
+  background: var(--surface);
+  border-top: 2px solid var(--round-summary);
+  padding: 16px 24px 18px;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+  box-shadow: 0 -3px 12px rgba(155,89,182,.10);
+}
+#round-review-bar.visible { display: flex; }
+
+.review-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.review-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #7D3C98;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.review-hint {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.review-plan-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+}
+
+#next-round-plan {
+  min-height: 90px;
+  max-height: 220px;
+  resize: vertical;
+  font-size: 13px;
+  line-height: 1.6;
+  border-color: rgba(155,89,182,.30);
+}
+#next-round-plan:focus {
+  border-color: var(--round-summary);
+  box-shadow: 0 0 0 3px rgba(155,89,182,.12);
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* ── Controls bar ────────────────────────────────────────────────────────── */
@@ -635,7 +687,7 @@ textarea { resize: vertical; min-height: 80px; }
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-#toast.error  { border-color: #EE4D2D; color: #C63412; background: #FFF5F3; }
+#toast.error   { border-color: #EE4D2D; color: #C63412; background: #FFF5F3; }
 #toast.success { border-color: #00A651; color: #007A3C; background: #F0FBF5; }
 </style>
 </head>
@@ -663,13 +715,11 @@ textarea { resize: vertical; min-height: 80px; }
   <!-- Setup panel -->
   <div id="setup-panel">
     <div class="setup-card">
-      <!-- Hero band -->
       <div class="setup-hero">
         <h2>Start a Debate</h2>
         <p>Bring the world's top AIs to your table. Pick your lineup, drop a topic, and let the ideas fly!</p>
       </div>
 
-      <!-- Form -->
       <div class="setup-form">
 
         <!-- Debater selection -->
@@ -678,27 +728,19 @@ textarea { resize: vertical; min-height: 80px; }
           <div class="debater-grid">
             <div class="debater-toggle" data-model="grok">
               <input type="checkbox" id="chk-grok" value="grok" />
-              <label for="chk-grok">
-                <span class="debater-dot"></span> Grok
-              </label>
+              <label for="chk-grok"><span class="debater-dot"></span> Grok</label>
             </div>
             <div class="debater-toggle" data-model="claude">
               <input type="checkbox" id="chk-claude" value="claude" checked />
-              <label for="chk-claude">
-                <span class="debater-dot"></span> Claude
-              </label>
+              <label for="chk-claude"><span class="debater-dot"></span> Claude</label>
             </div>
             <div class="debater-toggle" data-model="gpt">
               <input type="checkbox" id="chk-gpt" value="gpt" checked />
-              <label for="chk-gpt">
-                <span class="debater-dot"></span> GPT
-              </label>
+              <label for="chk-gpt"><span class="debater-dot"></span> GPT</label>
             </div>
             <div class="debater-toggle" data-model="gemini">
               <input type="checkbox" id="chk-gemini" value="gemini" />
-              <label for="chk-gemini">
-                <span class="debater-dot"></span> Gemini
-              </label>
+              <label for="chk-gemini"><span class="debater-dot"></span> Gemini</label>
             </div>
           </div>
         </div>
@@ -724,31 +766,18 @@ textarea { resize: vertical; min-height: 80px; }
             oninput="onContextEdit()"></textarea>
           <div id="context-gen-status" style="font-size:11px;margin-top:6px;display:none;flex-direction:column;gap:8px;">
             <span id="context-gen-msg" style="color:var(--muted);"></span>
-            <!-- Review banner shown after generation -->
             <div id="context-review-banner" style="display:none;background:rgba(0,166,81,.08);border:1.5px solid #B2E8C8;border-radius:8px;padding:10px 14px;">
               <div style="font-size:12px;font-weight:700;color:#007A3C;margin-bottom:6px;">✅ Context generated by Claude</div>
               <div style="font-size:12px;color:var(--text);line-height:1.5;margin-bottom:10px;">Read the context above, make any edits, then confirm when ready.</div>
               <div style="display:flex;gap:8px;">
-                <button class="btn btn-primary" onclick="confirmContext()"
-                  style="font-size:12px;padding:7px 16px;">
+                <button class="btn btn-primary" onclick="confirmContext()" style="font-size:12px;padding:7px 16px;">
                   ✓ Looks good — Start Debate
                 </button>
-                <button class="btn btn-ghost" onclick="editContext()"
-                  style="font-size:12px;padding:7px 14px;">
+                <button class="btn btn-ghost" onclick="editContext()" style="font-size:12px;padding:7px 14px;">
                   ✏️ Edit further
                 </button>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Rounds -->
-        <div class="form-group" id="rounds-group">
-          <label>Debate Rounds</label>
-          <div class="rounds-group">
-            <button class="round-btn" data-rounds="1" onclick="setRounds(1)">1 Round</button>
-            <button class="round-btn active" data-rounds="2" onclick="setRounds(2)">2 Rounds</button>
-            <button class="round-btn" data-rounds="3" onclick="setRounds(3)">3 Rounds</button>
           </div>
         </div>
 
@@ -763,14 +792,33 @@ textarea { resize: vertical; min-height: 80px; }
   <div id="debate-panel">
     <div id="transcript"></div>
 
-    <!-- Controls -->
+    <!-- Round review bar — shown after each round's facilitator summary -->
+    <div id="round-review-bar">
+      <div class="review-header">
+        <span class="review-title">
+          🗺️ <span id="review-title-text">Round 1 Complete</span>
+        </span>
+        <span class="review-hint">Review the summary above · edit the next-round focus below · then decide</span>
+      </div>
+      <div>
+        <div class="review-plan-label">Focus for next round <span style="text-transform:none;font-weight:400;letter-spacing:0">(edit freely)</span></div>
+        <textarea id="next-round-plan" placeholder="The facilitator's proposed focus will appear here. Edit to redirect, add constraints, or sharpen the questions before the next round."></textarea>
+      </div>
+      <div class="review-actions">
+        <button class="btn btn-primary" id="btn-next-round" onclick="startNextRound()">
+          ▶ Start Round <span id="next-round-num">2</span>
+        </button>
+        <button class="btn btn-purple" onclick="endAndSummarize()">
+          📋 End Debate &amp; Final Summary
+        </button>
+      </div>
+    </div>
+
+    <!-- Controls bar — topic + first-round start only -->
     <div id="controls-bar">
       <div class="controls-topic" id="controls-topic"></div>
       <button class="btn btn-primary" id="btn-start-round" onclick="startRound()" disabled>
         ▶ Start Round 1
-      </button>
-      <button class="btn btn-success" id="btn-summarize" onclick="startSummary()" disabled>
-        📋 Summary
       </button>
     </div>
 
@@ -801,25 +849,17 @@ marked.setOptions({ breaks: true, gfm: true });
 const state = {
   sessionId: null,
   eventSource: null,
-  phase: 'setup',         // setup | facilitation | ready | round_N | summary | done
+  phase: 'setup',
   currentRound: 0,
-  maxRounds: 2,
-  selectedRounds: 2,
   debaters: [],
-  activeSpeaker: null,    // speaker key currently streaming
-  activeBubble: null,     // DOM element being streamed into
-  activeText: '',         // raw text buffer for the active bubble
+  activeSpeaker: null,
+  activeBubble: null,
+  activeText: '',
   isBusy: false,
+  awaitingReview: false,   // true while round-review-bar is visible
 };
 
 // ── Setup helpers ──────────────────────────────────────────────────────────
-function setRounds(n) {
-  state.selectedRounds = n;
-  document.querySelectorAll('.round-btn').forEach(b => {
-    b.classList.toggle('active', parseInt(b.dataset.rounds) === n);
-  });
-}
-
 function getSelectedDebaters() {
   return [...document.querySelectorAll('.debater-grid input:checked')]
     .map(el => el.value);
@@ -835,14 +875,13 @@ async function startDebate() {
   if (!topic) { toast('Enter a debate topic', 'error'); return; }
 
   state.debaters = debaters;
-  state.maxRounds = state.selectedRounds;
 
   let data;
   try {
     const res = await fetch('/api/session/create', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ debaters, topic, context, rounds: state.selectedRounds }),
+      body: JSON.stringify({ debaters, topic, context }),
     });
     data = await res.json();
     if (!res.ok) { toast(data.error || 'Failed to create session', 'error'); return; }
@@ -857,8 +896,6 @@ async function startDebate() {
 
   showDebatePanel(topic);
   connectSSE();
-
-  // Kick off facilitation
   await apiPost('/facilitate');
 }
 
@@ -869,7 +906,7 @@ function showDebatePanel(topic) {
   document.getElementById('btn-new-debate').style.display = 'inline-flex';
   document.getElementById('controls-topic').innerHTML =
     `<strong>Topic:</strong> ${escapeHtml(topic)}`;
-  buildPhaseBar();
+  initPhaseBar();
 }
 
 function resetToSetup() {
@@ -880,6 +917,7 @@ function resetToSetup() {
   state.activeSpeaker = null;
   state.activeBubble = null;
   state.isBusy = false;
+  state.awaitingReview = false;
 
   document.getElementById('transcript').innerHTML = '';
   document.getElementById('setup-panel').style.display = '';
@@ -888,46 +926,41 @@ function resetToSetup() {
   document.getElementById('phase-bar').classList.remove('visible');
   document.getElementById('phase-bar').innerHTML = '';
   document.getElementById('interrupt-input').value = '';
+  document.getElementById('round-review-bar').classList.remove('visible');
+  document.getElementById('next-round-plan').value = '';
   updateControls();
 }
 
 // ── Phase bar ──────────────────────────────────────────────────────────────
-function buildPhaseBar() {
+function initPhaseBar() {
   const bar = document.getElementById('phase-bar');
   bar.innerHTML = '';
-
-  const phases = [
-    { key: 'facilitation', label: 'Intro' },
-    ...Array.from({ length: state.maxRounds }, (_, i) => ({
-      key: `round_${i + 1}`,
-      label: `Round ${i + 1}`,
-    })),
-    { key: 'summary', label: 'Summary' },
-  ];
-
-  phases.forEach((p, idx) => {
-    if (idx > 0) {
-      const sep = document.createElement('span');
-      sep.className = 'phase-sep';
-      sep.textContent = '›';
-      bar.appendChild(sep);
-    }
-    const step = document.createElement('div');
-    step.className = 'phase-step';
-    step.id = `phase-step-${p.key}`;
-    step.innerHTML = `<span class="dot"></span>${p.label}`;
-    bar.appendChild(step);
-  });
-
+  _addPhaseStep('facilitation', 'Intro');
   bar.classList.add('visible');
   setActivePhase('facilitation');
+}
+
+function _addPhaseStep(key, label) {
+  const bar = document.getElementById('phase-bar');
+  if (bar.querySelector(`#phase-step-${key}`)) return; // already exists
+
+  if (bar.children.length > 0) {
+    const sep = document.createElement('span');
+    sep.className = 'phase-sep';
+    sep.textContent = '›';
+    bar.appendChild(sep);
+  }
+  const step = document.createElement('div');
+  step.className = 'phase-step';
+  step.id = `phase-step-${key}`;
+  step.innerHTML = `<span class="dot"></span>${label}`;
+  bar.appendChild(step);
 }
 
 function setActivePhase(phaseKey) {
   document.querySelectorAll('.phase-step').forEach(el => {
     el.classList.remove('active', 'done');
   });
-
   const phases = [...document.querySelectorAll('.phase-step')];
   let reached = false;
   phases.forEach(el => {
@@ -942,16 +975,7 @@ function connectSSE() {
   if (state.eventSource) state.eventSource.close();
   state.eventSource = new EventSource(`/api/stream/${state.sessionId}`);
   state.eventSource.onmessage = e => {
-    try {
-      const ev = JSON.parse(e.data);
-      handleEvent(ev);
-      if (ev.type === 'speaker_done' && !['facilitator', 'summary'].includes(ev.speaker)) {
-        syncStatus();
-      }
-    } catch (_) {}
-  };
-  state.eventSource.onerror = () => {
-    // Browser auto-reconnects; no action needed
+    try { handleEvent(JSON.parse(e.data)); } catch (_) {}
   };
 }
 
@@ -962,21 +986,27 @@ function handleEvent(ev) {
 
     case 'phase_change':
       state.phase = ev.phase;
-      if (ev.round !== undefined) {
-        state.currentRound = ev.round;
-        state.maxRounds = ev.max_rounds ?? state.maxRounds;
-      }
-      setActivePhase(ev.phase);
-      if (ev.phase.startsWith('round_')) {
-        appendPhaseDivider(`Round ${ev.round} of ${state.maxRounds}`);
+      if (ev.round !== undefined) state.currentRound = ev.round;
+
+      if (ev.phase.startsWith('round_summary_')) {
+        _addPhaseStep(`round_summary_${ev.round}`, `R${ev.round} Summary`);
+        setActivePhase(`round_summary_${ev.round}`);
+        appendPhaseDivider(`Round ${ev.round} — Facilitator Summary`);
+      } else if (ev.phase.startsWith('round_')) {
+        _addPhaseStep(ev.phase, `Round ${ev.round}`);
+        setActivePhase(ev.phase);
+        appendPhaseDivider(`Round ${ev.round}`);
       } else if (ev.phase === 'summary') {
-        appendPhaseDivider('Final Summary');
+        _addPhaseStep('summary', 'Final Summary');
         setActivePhase('summary');
+        appendPhaseDivider('Final Summary');
       }
       break;
 
     case 'speaker_start':
       state.isBusy = true;
+      state.awaitingReview = false;
+      hideReviewBar();
       state.activeSpeaker = ev.speaker;
       state.activeText = '';
       state.activeBubble = createBubble(ev.speaker, ev.round);
@@ -987,7 +1017,7 @@ function handleEvent(ev) {
       if (state.activeBubble && state.activeSpeaker === ev.speaker) {
         state.activeText += ev.text;
         const body = state.activeBubble.querySelector('.bubble-body');
-        body.textContent = state.activeText;  // raw while streaming
+        body.textContent = state.activeText;
         body.classList.add('streaming-cursor');
         scrollToBottom();
       }
@@ -997,17 +1027,31 @@ function handleEvent(ev) {
       if (state.activeBubble) {
         const body = state.activeBubble.querySelector('.bubble-body');
         body.classList.remove('streaming-cursor');
-        body.innerHTML = marked.parse(state.activeText);  // render markdown
+        body.innerHTML = marked.parse(state.activeText);
         const indicator = state.activeBubble.querySelector('.typing-indicator');
         if (indicator) indicator.remove();
       }
       state.activeBubble = null;
       state.activeSpeaker = null;
       state.activeText = '';
-      if (ev.speaker === 'facilitator' || ev.speaker === 'summary') {
+      // Facilitation done → enable Start Round 1
+      if (ev.speaker === 'facilitator') {
         state.isBusy = false;
         updateControls();
       }
+      // Final summary done
+      if (ev.speaker === 'summary') {
+        state.isBusy = false;
+        updateControls();
+      }
+      break;
+
+    case 'round_summary_done':
+      // After debaters finish + round summary streams → show review bar
+      state.isBusy = false;
+      state.awaitingReview = true;
+      showReviewBar(ev.round, ev.proposed_plan || '');
+      updateControls();
       break;
 
     case 'user_input':
@@ -1017,23 +1061,77 @@ function handleEvent(ev) {
     case 'debate_ended':
       state.phase = 'done';
       state.isBusy = false;
+      state.awaitingReview = false;
+      hideReviewBar();
       if (state.eventSource) { state.eventSource.close(); state.eventSource = null; }
       setActivePhase('summary');
       updateControls();
-      toast('Debate concluded — summary ready!', 'success');
+      toast('Debate concluded — final summary ready!', 'success');
       break;
   }
 }
 
+// ── Round review bar ────────────────────────────────────────────────────────
+function showReviewBar(round, proposedPlan) {
+  document.getElementById('review-title-text').textContent = `Round ${round} Complete`;
+  document.getElementById('next-round-num').textContent = round + 1;
+  document.getElementById('next-round-plan').value = proposedPlan;
+  document.getElementById('round-review-bar').classList.add('visible');
+  document.getElementById('next-round-plan').focus();
+  scrollToBottom();
+}
+
+function hideReviewBar() {
+  document.getElementById('round-review-bar').classList.remove('visible');
+}
+
+async function startNextRound() {
+  if (state.isBusy) return;
+  const plan = document.getElementById('next-round-plan').value.trim();
+  hideReviewBar();
+  state.awaitingReview = false;
+  state.isBusy = true;
+  updateControls();
+
+  if (!state.sessionId) return;
+  try {
+    const res = await fetch(`/api/session/${state.sessionId}/round`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plan }),
+    });
+    if (!res.ok) {
+      const d = await res.json();
+      toast(d.error || 'Failed to start round', 'error');
+      state.isBusy = false;
+      updateControls();
+    }
+  } catch {
+    toast('Server unreachable', 'error');
+    state.isBusy = false;
+    updateControls();
+  }
+}
+
+async function endAndSummarize() {
+  if (state.isBusy) return;
+  hideReviewBar();
+  state.awaitingReview = false;
+  state.isBusy = true;
+  updateControls();
+  await apiPost('/summarize');
+}
+
 // ── Bubble helpers ─────────────────────────────────────────────────────────
 const SPEAKER_META = {
-  facilitator: { label: 'Facilitator', badge: 'badge-facilitator' },
-  grok:        { label: 'Grok',        badge: 'badge-grok' },
-  claude:      { label: 'Claude',      badge: 'badge-claude' },
-  gpt:         { label: 'GPT',         badge: 'badge-gpt' },
-  gemini:      { label: 'Gemini',      badge: 'badge-gemini' },
-  summary:     { label: 'Summary',     badge: 'badge-summary' },
-  moderator:   { label: 'You',         badge: 'badge-moderator' },
+  facilitator:    { label: 'Facilitator',     badge: 'badge-facilitator' },
+  round_summary:  { label: 'Round Summary',   badge: 'badge-round-summary' },
+  grok:           { label: 'Grok',            badge: 'badge-grok' },
+  claude:         { label: 'Claude',          badge: 'badge-claude' },
+  gpt:            { label: 'GPT',             badge: 'badge-gpt' },
+  gemini:         { label: 'Gemini',          badge: 'badge-gemini' },
+  summary:        { label: 'Final Summary',   badge: 'badge-summary' },
+  moderator:      { label: 'You',             badge: 'badge-moderator' },
 };
 
 function createBubble(speaker, round) {
@@ -1051,14 +1149,13 @@ function createBubble(speaker, round) {
   badge.textContent = meta.label;
   header.appendChild(badge);
 
-  if (round) {
+  if (round && !['facilitator', 'round_summary', 'summary'].includes(speaker)) {
     const tag = document.createElement('span');
     tag.className = 'round-tag';
     tag.textContent = `Round ${round}`;
     header.appendChild(tag);
   }
 
-  // Typing indicator
   const typing = document.createElement('div');
   typing.className = 'typing-indicator';
   typing.innerHTML = '<span></span><span></span><span></span>';
@@ -1109,22 +1206,15 @@ function scrollToBottom() {
   t.scrollTop = t.scrollHeight;
 }
 
-// ── Control buttons ────────────────────────────────────────────────────────
+// ── Controls bar ───────────────────────────────────────────────────────────
 function updateControls() {
-  const phase = state.phase;
-  const busy = state.isBusy;
   const roundBtn = document.getElementById('btn-start-round');
-  const sumBtn = document.getElementById('btn-summarize');
-
-  const canStartRound = !busy && phase === 'ready' && state.currentRound < state.maxRounds;
-  const canSummarize = !busy && (phase === 'ready' || phase === 'done') && state.currentRound > 0 && phase !== 'done' && phase !== 'summary';
-
-  roundBtn.disabled = !canStartRound;
-  roundBtn.textContent = `▶ Start Round ${state.currentRound + 1}`;
-  sumBtn.disabled = !canSummarize;
+  // Round 1 button is only useful before first round starts
+  const canStart1 = !state.isBusy && !state.awaitingReview
+    && state.phase === 'ready' && state.currentRound === 0;
+  roundBtn.disabled = !canStart1;
 }
 
-// ── Actions ────────────────────────────────────────────────────────────────
 async function startRound() {
   if (state.isBusy) return;
   state.isBusy = true;
@@ -1132,13 +1222,7 @@ async function startRound() {
   await apiPost('/round');
 }
 
-async function startSummary() {
-  if (state.isBusy) return;
-  state.isBusy = true;
-  updateControls();
-  await apiPost('/summarize');
-}
-
+// ── Interrupt ──────────────────────────────────────────────────────────────
 async function sendInterrupt() {
   const input = document.getElementById('interrupt-input');
   const message = input.value.trim();
@@ -1161,18 +1245,16 @@ async function sendInterrupt() {
 }
 
 function interruptKeydown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendInterrupt();
-  }
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendInterrupt(); }
 }
 
-async function apiPost(path) {
+async function apiPost(path, body = {}) {
   if (!state.sessionId) return;
   try {
     const res = await fetch(`/api/session/${state.sessionId}${path}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     });
     if (!res.ok) {
       const d = await res.json();
@@ -1185,22 +1267,6 @@ async function apiPost(path) {
     state.isBusy = false;
     updateControls();
   }
-}
-
-async function syncStatus() {
-  if (!state.sessionId) return;
-  try {
-    const res = await fetch(`/api/session/${state.sessionId}/status`);
-    if (!res.ok) return;
-    const data = await res.json();
-    if (data.phase === 'ready') {
-      state.phase = 'ready';
-      state.isBusy = false;
-      state.currentRound = data.current_round;
-      state.maxRounds = data.max_rounds;
-      updateControls();
-    }
-  } catch (_) {}
 }
 
 // ── Utility ────────────────────────────────────────────────────────────────
@@ -1223,30 +1289,24 @@ function toast(msg, type = '') {
   toastTimer = setTimeout(() => { el.className = ''; }, 3000);
 }
 
-// ── Context generation ────────────────────────────────────────────────────────
-
+// ── Context generation ─────────────────────────────────────────────────────
 function onContextEdit() {
-  // If user manually edits after generation, dismiss the review banner
   const banner = document.getElementById('context-review-banner');
   if (banner && banner.style.display !== 'none') {
     banner.style.display = 'none';
     document.getElementById('btn-start-debate').style.display = '';
-    document.getElementById('rounds-group').style.display = '';
   }
 }
 
 function confirmContext() {
-  // User approved the generated context — hide banner and kick off debate
   document.getElementById('context-review-banner').style.display = 'none';
   document.getElementById('context-gen-status').style.display = 'none';
   startDebate();
 }
 
 function editContext() {
-  // User wants to keep editing — dismiss banner, show start button, focus textarea
   document.getElementById('context-review-banner').style.display = 'none';
   document.getElementById('btn-start-debate').style.display = '';
-  document.getElementById('rounds-group').style.display = '';
   document.getElementById('context-input').focus();
 }
 
@@ -1260,9 +1320,7 @@ async function generateContext() {
   const banner = document.getElementById('context-review-banner');
   const textarea = document.getElementById('context-input');
   const startBtn = document.getElementById('btn-start-debate');
-  const roundsGroup = document.getElementById('rounds-group');
 
-  // Enter generating state
   btn.disabled = true;
   btn.textContent = '⏳ Generating…';
   textarea.value = '';
@@ -1271,24 +1329,19 @@ async function generateContext() {
   statusEl.style.display = 'flex';
   statusEl.style.flexDirection = 'column';
   statusMsg.textContent = '🔍 Claude is researching the topic…';
-  // Hide start button while user reviews generated context
   startBtn.style.display = 'none';
-  roundsGroup.style.display = 'none';
 
   let generated = '';
-
   try {
     const res = await fetch('/api/context/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic }),
     });
-
     if (!res.ok) {
       const d = await res.json();
       toast(d.error || 'Failed to generate context', 'error');
-      resetGenBtn(btn, statusEl, startBtn, roundsGroup);
-      return;
+      _resetGenBtn(btn, statusEl, startBtn); return;
     }
 
     const reader = res.body.getReader();
@@ -1299,10 +1352,8 @@ async function generateContext() {
       const { done, value } = await reader.read();
       if (done) break;
       buf += decoder.decode(value, { stream: true });
-
       const lines = buf.split('\n');
       buf = lines.pop();
-
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
         try {
@@ -1315,30 +1366,28 @@ async function generateContext() {
           } else if (ev.type === 'done') {
             btn.disabled = false;
             btn.textContent = '✨ Regenerate';
-            statusMsg.textContent = 'Review the context below, then confirm or edit before starting.';
+            statusMsg.textContent = 'Review the context above, then confirm or edit before starting.';
             banner.style.display = 'block';
             textarea.focus();
             return;
           } else if (ev.type === 'error') {
             toast('Generation error: ' + ev.text, 'error');
-            resetGenBtn(btn, statusEl, startBtn, roundsGroup);
-            return;
+            _resetGenBtn(btn, statusEl, startBtn); return;
           }
         } catch (_) {}
       }
     }
   } catch (e) {
     toast('Cannot reach the server', 'error');
-    resetGenBtn(btn, statusEl, startBtn, roundsGroup);
+    _resetGenBtn(btn, statusEl, startBtn);
   }
 }
 
-function resetGenBtn(btn, statusEl, startBtn, roundsGroup) {
+function _resetGenBtn(btn, statusEl, startBtn) {
   btn.disabled = false;
   btn.textContent = '✨ Generate with AI';
   statusEl.style.display = 'none';
   if (startBtn) startBtn.style.display = '';
-  if (roundsGroup) roundsGroup.style.display = '';
 }
 </script>
 </body>
