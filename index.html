@@ -711,8 +711,18 @@ textarea { resize: vertical; min-height: 80px; }
 
         <!-- Context -->
         <div class="form-group">
-          <label>Additional Context <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <label style="display:flex;align-items:center;justify-content:space-between;">
+            <span>Additional Context <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></span>
+            <button type="button" class="btn btn-ghost" id="btn-gen-context"
+              onclick="generateContext()"
+              style="font-size:11px;padding:4px 10px;height:auto;text-transform:none;letter-spacing:0;border-radius:6px;">
+              ✨ Generate with AI
+            </button>
+          </label>
           <textarea id="context-input" placeholder="Provide background, constraints, or framing the facilitator should use…"></textarea>
+          <div id="context-gen-status" style="display:none;font-size:11px;color:var(--muted);margin-top:5px;display:flex;align-items:center;gap:6px;">
+            <span id="context-gen-msg"></span>
+          </div>
         </div>
 
         <!-- Rounds -->
@@ -1194,6 +1204,90 @@ function toast(msg, type = '') {
   el.className = 'show' + (type ? ` ${type}` : '');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+// ── Context generation ────────────────────────────────────────────────────────
+let _contextSource = null;
+
+async function generateContext() {
+  const topic = document.getElementById('topic-input').value.trim();
+  if (!topic) { toast('Enter a debate topic first', 'error'); return; }
+
+  const btn = document.getElementById('btn-gen-context');
+  const statusEl = document.getElementById('context-gen-status');
+  const statusMsg = document.getElementById('context-gen-msg');
+  const textarea = document.getElementById('context-input');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Generating…';
+  textarea.value = '';
+  statusEl.style.display = 'flex';
+  statusMsg.textContent = 'Claude is researching the topic…';
+
+  if (_contextSource) { _contextSource.close(); _contextSource = null; }
+
+  let generated = '';
+
+  try {
+    // Use fetch + ReadableStream to stream the SSE response
+    const res = await fetch('/api/context/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic }),
+    });
+
+    if (!res.ok) {
+      const d = await res.json();
+      toast(d.error || 'Failed to generate context', 'error');
+      resetGenBtn(btn, statusEl);
+      return;
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+
+      // Parse SSE lines
+      const lines = buf.split('\n');
+      buf = lines.pop(); // keep incomplete line
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const ev = JSON.parse(line.slice(6));
+          if (ev.type === 'chunk') {
+            generated += ev.text;
+            textarea.value = generated;
+            textarea.style.height = 'auto';
+            textarea.style.height = Math.min(textarea.scrollHeight, 320) + 'px';
+          } else if (ev.type === 'done') {
+            statusMsg.textContent = '✅ Context generated — review and edit as needed.';
+            btn.disabled = false;
+            btn.textContent = '✨ Regenerate';
+            return;
+          } else if (ev.type === 'error') {
+            toast('Generation error: ' + ev.text, 'error');
+            resetGenBtn(btn, statusEl);
+            return;
+          }
+        } catch (_) {}
+      }
+    }
+  } catch (e) {
+    toast('Cannot reach the server', 'error');
+    resetGenBtn(btn, statusEl);
+  }
+}
+
+function resetGenBtn(btn, statusEl) {
+  btn.disabled = false;
+  btn.textContent = '✨ Generate with AI';
+  statusEl.style.display = 'none';
 }
 </script>
 </body>

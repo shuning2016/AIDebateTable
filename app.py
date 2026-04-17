@@ -159,6 +159,73 @@ def summarize(session_id):
     return jsonify({"status": "started"})
 
 
+# ── Context generation ────────────────────────────────────────────────────────
+
+@app.route("/api/context/generate", methods=["POST"])
+def generate_context():
+    """Claude acts as insight provider, streaming a research briefing for the topic."""
+    data = request.get_json(force=True)
+    topic = (data.get("topic") or "").strip()
+    if not topic:
+        return jsonify({"error": "Topic is required"}), 400
+
+    from ai_clients import AIClient
+    ai = AIClient()
+
+    system_prompt = (
+        "You are Claude, serving as an expert research analyst and debate insight provider. "
+        "Your goal is to prepare comprehensive, balanced, and factual background context "
+        "so that all AI debaters can engage with the topic at a high level. "
+        "Be precise, neutral, and concrete. Do not argue a position."
+    )
+
+    prompt = f"""Prepare a comprehensive debate briefing for the following topic:
+
+**{topic}**
+
+Other AI systems (GPT, Grok, Gemini, and others) will use this briefing to debate this topic. Equip them with rich, balanced context.
+
+Structure your briefing exactly as follows:
+
+## 🔍 Topic Overview
+2–3 sentences defining and framing the topic clearly.
+
+## 📊 Key Facts & Data
+5–7 concrete facts, statistics, or data points directly relevant to this debate.
+
+## 🕐 Recent Developments & Trends
+3–4 key recent developments, trends, or shifts in thinking that shape the current debate landscape.
+
+## 🏛️ Major Perspectives
+The main positions held by different stakeholders, experts, or schools of thought. Present each perspective fairly and accurately.
+
+## ⚖️ Core Tensions
+The fundamental trade-offs, value conflicts, or empirical disagreements at the heart of this debate.
+
+## 🎯 Key Questions for the Debate
+3–4 specific, debatable questions that the AI debaters should try to answer.
+
+Keep the total under 650 words. Be precise, evidence-grounded, and balanced."""
+
+    def stream_context():
+        try:
+            for chunk in ai.stream("claude", prompt, system_prompt=system_prompt):
+                yield f"data: {json.dumps({'type': 'chunk', 'text': chunk})}\n\n"
+        except Exception as exc:
+            yield f"data: {json.dumps({'type': 'error', 'text': str(exc)})}\n\n"
+        yield f"data: {json.dumps({'type': 'done'})}\n\n"
+
+    return Response(
+        stream_context(),
+        mimetype="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "Connection": "keep-alive",
+        },
+    )
+
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     print(f"AI Debate Forum running at http://localhost:{port}")
