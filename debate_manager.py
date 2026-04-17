@@ -129,9 +129,10 @@ Keep the total under 450 words. Be engaging and neutral."""
             "label": f"Round {self.current_round} of {self.max_rounds}",
         })
 
-        # Snapshot user inputs so they're included in this round's prompts
+        # Snapshot and clear user inputs for this round
         with self._lock:
             round_user_inputs = list(self.user_inputs)
+            self.user_inputs.clear()
 
         for debater in self.debaters:
             prompt = self._build_debater_prompt(debater, round_user_inputs)
@@ -237,13 +238,17 @@ Be specific—reference actual statements from the transcript. Keep each section
 
         moderator_block = ""
         if round_user_inputs:
-            inputs = "\n".join(f'- "{m}"' for m in round_user_inputs)
+            inputs = "\n".join(f'  {i+1}. "{m}"' for i, m in enumerate(round_user_inputs))
             moderator_block = f"""
 ---
-⚠️ **MODERATOR INPUTS — you MUST address these in your response**:
+🎯 **THE HUMAN HAS ENTERED THE DEBATE — THIS IS YOUR TOP PRIORITY:**
 {inputs}
 
-Acknowledge the moderator's points, engage with them seriously, and incorporate them into your argument where relevant.
+You MUST treat this as a direct challenge or contribution to the debate:
+- **Quote or closely paraphrase** their specific point(s) in your response.
+- **Take a clear stance**: do you agree, partially agree, or disagree — and why?
+- **Build your argument around it**: let their input reshape or sharpen your position.
+- Do NOT bury it at the end. Engage with it as the first or central part of your response.
 ---"""
 
         return f"""You are participating in **Round {self.current_round} of {self.max_rounds}** of a structured debate.
