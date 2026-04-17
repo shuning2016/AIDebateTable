@@ -26,7 +26,7 @@ MODELS = {
         "color": "#10b981",
     },
     "grok": {
-        "model": "grok-2-latest",
+        "model": "grok-3",
         "env_key": "GROK_API_KEY",
         "base_url": "https://api.x.ai/v1",
         "display": "Grok",
