@@ -159,9 +159,30 @@ def summarize(session_id):
 
 # ── Context generation ────────────────────────────────────────────────────────
 
+def _search_web(query: str, max_results: int = 8) -> str:
+    """Fetch live search results from DuckDuckGo. Returns empty string on failure."""
+    try:
+        from duckduckgo_search import DDGS
+        with DDGS() as ddgs:
+            results = list(ddgs.text(query, max_results=max_results))
+        if not results:
+            return ""
+        parts = []
+        for r in results:
+            title = r.get("title", "")
+            body = r.get("body", "")
+            href = r.get("href", "")
+            parts.append(f"**{title}**\n{body}\nSource: {href}")
+        return "\n\n".join(parts)
+    except Exception as exc:
+        import logging
+        logging.getLogger(__name__).warning("Web search failed: %s", exc)
+        return ""
+
+
 @app.route("/api/context/generate", methods=["POST"])
 def generate_context():
-    """Claude acts as insight provider, streaming a research briefing for the topic."""
+    """Search the web, then Claude synthesises a debate briefing from live results."""
     data = request.get_json(force=True)
     topic = (data.get("topic") or "").strip()
     if not topic:
@@ -170,20 +191,32 @@ def generate_context():
     from ai_clients import AIClient
     ai = AIClient()
 
+    # Fetch live results before streaming (synchronous, typically < 2 s)
+    web_results = _search_web(topic)
+
+    web_block = ""
+    if web_results:
+        web_block = f"""
+**Live web search results for "{topic}":**
+{web_results}
+
+Use the search results above as your PRIMARY source for current facts and recent events.
+Prioritise information from these results over your training data, especially for anything time-sensitive.
+"""
+
     system_prompt = (
-        "You are Grok, serving as an expert research analyst and debate insight provider. "
-        "You have access to real-time information — use it to provide the most current facts, "
-        "recent developments, and up-to-date data available. "
+        "You are an expert research analyst and debate insight provider. "
         "Your goal is to prepare comprehensive, balanced, and factual background context "
         "so that all AI debaters can engage with the topic at a high level. "
+        "When live search results are provided, treat them as ground truth for recent events. "
         "Be precise, neutral, and concrete. Do not argue a position."
     )
 
     prompt = f"""Prepare a comprehensive debate briefing for the following topic:
 
 **{topic}**
-
-Other AI systems (GPT, Grok, Gemini, and others) will use this briefing to debate this topic. Equip them with rich, balanced context.
+{web_block}
+Other AI systems (GPT, Grok, Gemini, and others) will use this briefing to debate this topic. Equip them with rich, balanced, and current context.
 
 Structure your briefing exactly as follows:
 
@@ -191,25 +224,25 @@ Structure your briefing exactly as follows:
 2–3 sentences defining and framing the topic clearly.
 
 ## 📊 Key Facts & Data
-5–7 concrete facts, statistics, or data points directly relevant to this debate.
+5–7 concrete facts, statistics, or data points directly relevant to this debate. Cite sources where available.
 
 ## 🕐 Recent Developments & Trends
-3–4 key recent developments, trends, or shifts in thinking that shape the current debate landscape.
+3–4 key recent developments based on the search results above.
 
 ## 🏛️ Major Perspectives
-The main positions held by different stakeholders, experts, or schools of thought. Present each perspective fairly and accurately.
+The main positions held by different stakeholders, experts, or schools of thought. Present each fairly.
 
 ## ⚖️ Core Tensions
-The fundamental trade-offs, value conflicts, or empirical disagreements at the heart of this debate.
+The fundamental trade-offs or disagreements at the heart of this debate.
 
 ## 🎯 Key Questions for the Debate
-3–4 specific, debatable questions that the AI debaters should try to answer.
+3–4 specific, debatable questions the AI debaters should answer.
 
-Keep the total under 650 words. Be precise, evidence-grounded, and balanced."""
+Keep the total under 650 words. Be precise and grounded in the search results."""
 
     def stream_context():
         try:
-            for chunk in ai.stream("grok", prompt, system_prompt=system_prompt):
+            for chunk in ai.stream("claude", prompt, system_prompt=system_prompt):
                 yield f"data: {json.dumps({'type': 'chunk', 'text': chunk})}\n\n"
         except Exception as exc:
             yield f"data: {json.dumps({'type': 'error', 'text': str(exc)})}\n\n"
