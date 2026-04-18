@@ -162,9 +162,9 @@ def summarize(session_id):
 def _search_web(query: str, max_results: int = 8) -> str:
     """Fetch live search results from DuckDuckGo. Returns empty string on failure."""
     try:
-        from duckduckgo_search import DDGS
+        from ddgs import DDGS
         with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=max_results))
+            results = list(ddgs.text(query, max_results=max_results, region="wt-wt"))
         if not results:
             return ""
         parts = []
