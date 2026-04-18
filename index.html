@@ -1359,7 +1359,10 @@ async function generateContext() {
         if (!line.startsWith('data: ')) continue;
         try {
           const ev = JSON.parse(line.slice(6));
-          if (ev.type === 'chunk') {
+          if (ev.type === 'search_status') {
+            statusMsg.textContent = ev.msg;
+            statusMsg.style.color = ev.hit ? '#007A3C' : '#C63412';
+          } else if (ev.type === 'chunk') {
             generated += ev.text;
             textarea.value = generated;
             textarea.style.height = 'auto';

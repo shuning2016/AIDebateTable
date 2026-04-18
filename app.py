@@ -193,6 +193,7 @@ def generate_context():
 
     # Fetch live results before streaming (synchronous, typically < 2 s)
     web_results = _search_web(topic)
+    search_hit = bool(web_results)
 
     web_block = ""
     if web_results:
@@ -241,6 +242,10 @@ The fundamental trade-offs or disagreements at the heart of this debate.
 Keep the total under 650 words. Be precise and grounded in the search results."""
 
     def stream_context():
+        # Tell the browser whether live search succeeded
+        search_msg = f"🌐 Web search found results — synthesizing current info…" if search_hit \
+            else "⚠️ Web search returned no results — using Claude training data (may be outdated)"
+        yield f"data: {json.dumps({'type': 'search_status', 'hit': search_hit, 'msg': search_msg})}\n\n"
         try:
             for chunk in ai.stream("claude", prompt, system_prompt=system_prompt):
                 yield f"data: {json.dumps({'type': 'chunk', 'text': chunk})}\n\n"
