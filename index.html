@@ -39,7 +39,7 @@
   --shadow:    0 4px 16px rgba(23,43,77,.10);
 }
 
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden; }
 
 body {
   background: var(--bg);
@@ -49,7 +49,7 @@ body {
   line-height: 1.6;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
 }
 
 /* ── Header ────────────────────────────────────────────────────────────── */
@@ -57,23 +57,19 @@ header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
   padding: 0 28px;
-  height: 60px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  position: sticky;
-  top: 0;
   z-index: 100;
   box-shadow: var(--shadow-sm);
-  border-top: 3px solid transparent;
-  background-clip: padding-box;
-  position: sticky;
+  position: relative;
 }
 header::before {
   content: '';
   position: absolute;
-  top: -3px; left: 0; right: 0;
+  top: 0; left: 0; right: 0;
   height: 3px;
   background: linear-gradient(90deg, #EE4D2D 0%, #F05025 60%, #FCCD34 100%);
 }
@@ -82,17 +78,16 @@ header::before {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.3px;
-  color: var(--accent);
 }
 .logo-icon {
-  width: 34px; height: 34px;
+  width: 32px; height: 32px;
   background: var(--accent);
   border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 .logo-text { color: var(--text); }
@@ -104,7 +99,7 @@ header::before {
 #phase-bar {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
-  padding: 10px 28px;
+  padding: 8px 28px;
   display: none;
   align-items: center;
   gap: 6px;
@@ -140,66 +135,132 @@ header::before {
 main {
   flex: 1;
   display: flex;
-  flex-direction: column;
   overflow: hidden;
+  min-height: 0;
 }
 
-/* ── Setup panel ────────────────────────────────────────────────────────── */
+/* ── Setup panel — full-height two-column ───────────────────────────────── */
 #setup-panel {
   flex: 1;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-  overflow-y: auto;
-}
-
-.setup-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  width: 100%;
-  max-width: 640px;
-  box-shadow: var(--shadow);
+  flex-direction: row;
   overflow: hidden;
 }
 
-.setup-hero {
-  background: linear-gradient(135deg, #EE4D2D 0%, #F05025 70%, #FF6B45 100%);
-  padding: 28px 36px 24px;
+/* Left hero column */
+.setup-left {
+  width: 380px;
+  flex-shrink: 0;
+  background: linear-gradient(160deg, #EE4D2D 0%, #C63412 55%, #8B1A00 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 56px 48px;
   color: #fff;
   position: relative;
   overflow: hidden;
 }
-.setup-hero::after {
+.setup-left::after {
   content: '🗣';
   position: absolute;
-  right: 28px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 64px;
-  opacity: 0.18;
+  right: -20px;
+  bottom: 40px;
+  font-size: 160px;
+  opacity: 0.10;
   line-height: 1;
+  pointer-events: none;
+  user-select: none;
 }
-.setup-hero h2 {
-  font-size: 24px;
+
+.setup-left-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 48px;
+}
+.setup-left-logo-icon {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,.20);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  backdrop-filter: blur(4px);
+}
+.setup-left-logo-text {
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: -0.3px;
-  margin-bottom: 6px;
+  color: #fff;
 }
-.setup-hero p {
+
+.setup-left h1 {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+  margin-bottom: 16px;
+}
+.setup-left p {
+  font-size: 14px;
+  opacity: 0.85;
+  line-height: 1.7;
+  margin-bottom: 40px;
+}
+
+.setup-features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.setup-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
   font-size: 13px;
-  opacity: 0.88;
-  max-width: 380px;
+  opacity: 0.90;
   line-height: 1.5;
 }
-
-.setup-form {
-  padding: 28px 36px 32px;
+.setup-feature-icon {
+  width: 28px; height: 28px;
+  background: rgba(255,255,255,.15);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 1px;
 }
 
-.form-group { margin-bottom: 22px; }
-.form-group label {
+/* Right form column */
+.setup-right {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--surface);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 40px;
+}
+
+.setup-form-wrap {
+  width: 100%;
+  max-width: 560px;
+}
+
+.setup-form-heading {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.setup-form-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+.form-group { margin-bottom: 24px; }
+.form-group > label {
   display: block;
   font-size: 12px;
   font-weight: 700;
@@ -215,9 +276,7 @@ main {
   gap: 10px;
 }
 
-.debater-toggle {
-  position: relative;
-}
+.debater-toggle { position: relative; }
 .debater-toggle input[type="checkbox"] {
   position: absolute;
   opacity: 0;
@@ -227,7 +286,7 @@ main {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 12px 16px;
   background: var(--bg);
   border: 2px solid var(--border);
   border-radius: var(--radius-sm);
@@ -348,11 +407,10 @@ textarea { resize: vertical; min-height: 80px; }
 }
 
 .btn-lg {
-  padding: 13px 28px;
+  padding: 14px 28px;
   font-size: 15px;
   width: 100%;
   justify-content: center;
-  margin-top: 6px;
   border-radius: var(--radius-sm);
   letter-spacing: 0.3px;
 }
@@ -363,6 +421,7 @@ textarea { resize: vertical; min-height: 80px; }
   display: none;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
 }
 #debate-panel.visible { display: flex; }
 
@@ -370,12 +429,13 @@ textarea { resize: vertical; min-height: 80px; }
 #transcript {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 28px;
+  padding: 24px 40px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   scroll-behavior: smooth;
   background: var(--bg);
+  min-height: 0;
 }
 #transcript::-webkit-scrollbar { width: 6px; }
 #transcript::-webkit-scrollbar-track { background: transparent; }
@@ -383,11 +443,10 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ── Bubbles ────────────────────────────────────────────────────────────── */
 .bubble {
-  max-width: 840px;
   width: 100%;
   align-self: flex-start;
 }
-.bubble.bubble-user-input { align-self: flex-end; }
+.bubble.bubble-user-input { align-self: flex-end; max-width: 720px; }
 
 .bubble-header {
   display: flex;
@@ -454,7 +513,7 @@ textarea { resize: vertical; min-height: 80px; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 4px var(--radius) var(--radius) var(--radius);
-  padding: 16px 20px;
+  padding: 16px 22px;
   line-height: 1.75;
   font-size: 14px;
   box-shadow: var(--shadow-sm);
@@ -543,10 +602,10 @@ textarea { resize: vertical; min-height: 80px; }
 #round-review-bar {
   background: var(--surface);
   border-top: 2px solid var(--round-summary);
-  padding: 16px 24px 18px;
+  padding: 14px 24px 16px;
   display: none;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   flex-shrink: 0;
   box-shadow: 0 -3px 12px rgba(155,89,182,.10);
 }
@@ -582,8 +641,8 @@ textarea { resize: vertical; min-height: 80px; }
 }
 
 #next-round-plan {
-  min-height: 90px;
-  max-height: 220px;
+  min-height: 80px;
+  max-height: 180px;
   resize: vertical;
   font-size: 13px;
   line-height: 1.6;
@@ -600,17 +659,25 @@ textarea { resize: vertical; min-height: 80px; }
   flex-wrap: wrap;
 }
 
-/* ── Controls bar ────────────────────────────────────────────────────────── */
-#controls-bar {
+/* ── Unified bottom bar ──────────────────────────────────────────────────── */
+#bottom-bar {
   background: var(--surface);
   border-top: 1px solid var(--border);
-  padding: 12px 24px;
+  padding: 10px 24px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 -2px 8px rgba(23,43,77,.05);
+}
+
+/* Topic + Start Round 1 row */
+#bottom-top-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-  flex-wrap: wrap;
-  box-shadow: 0 -2px 8px rgba(23,43,77,.05);
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
 }
 
 .controls-topic {
@@ -623,31 +690,28 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .controls-topic strong { color: var(--text); font-weight: 600; }
 
-/* ── Interrupt bar ───────────────────────────────────────────────────────── */
-#interrupt-bar {
-  background: var(--surface2);
-  border-top: 1px solid var(--border);
-  padding: 10px 24px 12px;
+/* Input + Send row */
+#bottom-input-row {
   display: flex;
   align-items: flex-end;
-  gap: 10px;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
-#interrupt-bar .interrupt-label {
+.interrupt-label {
   font-size: 11px;
   color: var(--accent);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.6px;
   margin-bottom: 4px;
+  white-space: nowrap;
 }
 
 .interrupt-input-wrap {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 #interrupt-input {
@@ -689,6 +753,22 @@ textarea { resize: vertical; min-height: 80px; }
 }
 #toast.error   { border-color: #EE4D2D; color: #C63412; background: #FFF5F3; }
 #toast.success { border-color: #00A651; color: #007A3C; background: #F0FBF5; }
+
+/* ── Responsive — narrow screens ────────────────────────────────────────── */
+@media (max-width: 860px) {
+  #setup-panel { flex-direction: column; }
+  .setup-left {
+    width: 100%;
+    padding: 32px 32px;
+    min-height: auto;
+  }
+  .setup-left::after { display: none; }
+  .setup-left h1 { font-size: 24px; }
+  .setup-features { display: none; }
+  .setup-left p { margin-bottom: 0; }
+  .setup-right { padding: 32px 24px; }
+  #transcript { padding: 16px 20px; }
+}
 </style>
 </head>
 <body>
@@ -712,15 +792,38 @@ textarea { resize: vertical; min-height: 80px; }
 <!-- ── Main ───────────────────────────────────────────────────────────────── -->
 <main>
 
-  <!-- Setup panel -->
+  <!-- ── Setup panel — two-column split ─────────────────────────────────── -->
   <div id="setup-panel">
-    <div class="setup-card">
-      <div class="setup-hero">
-        <h2>Start a Debate</h2>
-        <p>Bring the world's top AIs to your table. Pick your lineup, drop a topic, and let the ideas fly!</p>
-      </div>
 
-      <div class="setup-form">
+    <!-- Left: hero panel -->
+    <div class="setup-left">
+      <div class="setup-left-logo">
+        <div class="setup-left-logo-icon">🗣</div>
+        <span class="setup-left-logo-text">AI Debate Table</span>
+      </div>
+      <h1>Let the world's top AIs argue it out.</h1>
+      <p>Pick a topic, choose your lineup, and watch Claude, GPT, Grok, and Gemini clash in a structured, real-time debate — with you in the moderator's seat.</p>
+      <div class="setup-features">
+        <div class="setup-feature">
+          <div class="setup-feature-icon">🌐</div>
+          <span><strong>Live web search</strong> — AI-generated context uses the latest info from the web</span>
+        </div>
+        <div class="setup-feature">
+          <div class="setup-feature-icon">📣</div>
+          <span><strong>You're the moderator</strong> — challenge arguments, add context, steer the debate at any time</span>
+        </div>
+        <div class="setup-feature">
+          <div class="setup-feature-icon">📋</div>
+          <span><strong>Structured rounds</strong> — opening, rebuttals, summaries, and a final verdict</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: form panel -->
+    <div class="setup-right">
+      <div class="setup-form-wrap">
+        <div class="setup-form-heading">Configure Your Debate</div>
+        <div class="setup-form-sub">Set up the participants, topic, and optional context — then let it rip.</div>
 
         <!-- Debater selection -->
         <div class="form-group">
@@ -788,8 +891,10 @@ textarea { resize: vertical; min-height: 80px; }
     </div>
   </div>
 
-  <!-- Debate panel -->
+  <!-- ── Debate panel ──────────────────────────────────────────────────── -->
   <div id="debate-panel">
+
+    <!-- Transcript -->
     <div id="transcript"></div>
 
     <!-- Round review bar — shown after each round's facilitator summary -->
@@ -798,7 +903,7 @@ textarea { resize: vertical; min-height: 80px; }
         <span class="review-title">
           🗺️ <span id="review-title-text">Round 1 Complete</span>
         </span>
-        <span class="review-hint">Review the summary above · edit the next-round focus below · then decide</span>
+        <span class="review-hint">Review the summary above · edit the next-round focus · then decide</span>
       </div>
       <div>
         <div class="review-plan-label">Focus for next round <span style="text-transform:none;font-weight:400;letter-spacing:0">(edit freely)</span></div>
@@ -814,27 +919,30 @@ textarea { resize: vertical; min-height: 80px; }
       </div>
     </div>
 
-    <!-- Controls bar — topic + first-round start only -->
-    <div id="controls-bar">
-      <div class="controls-topic" id="controls-topic"></div>
-      <button class="btn btn-primary" id="btn-start-round" onclick="startRound()" disabled>
-        ▶ Start Round 1
-      </button>
+    <!-- Unified bottom bar -->
+    <div id="bottom-bar">
+      <!-- Topic + Start Round 1 (only before round 1) -->
+      <div id="bottom-top-row">
+        <div class="controls-topic" id="controls-topic"></div>
+        <button class="btn btn-primary" id="btn-start-round" onclick="startRound()" disabled>
+          ▶ Start Round 1
+        </button>
+      </div>
+      <!-- Interrupt input row -->
+      <div id="bottom-input-row">
+        <div class="interrupt-input-wrap">
+          <div class="interrupt-label">📣 Your input — jump in anytime</div>
+          <textarea id="interrupt-input" rows="1"
+            placeholder="Add context, challenge an argument, or redirect the debate…"
+            oninput="autoResize(this)"
+            onkeydown="interruptKeydown(event)"></textarea>
+        </div>
+        <button class="btn btn-primary" id="btn-interrupt" onclick="sendInterrupt()" style="margin-bottom:2px">
+          Send
+        </button>
+      </div>
     </div>
 
-    <!-- Interrupt -->
-    <div id="interrupt-bar">
-      <div class="interrupt-input-wrap">
-        <div class="interrupt-label">📣 Your input — jump in anytime</div>
-        <textarea id="interrupt-input" rows="1"
-          placeholder="Add context, challenge an argument, or redirect the debate…"
-          oninput="autoResize(this)"
-          onkeydown="interruptKeydown(event)"></textarea>
-      </div>
-      <button class="btn btn-primary" id="btn-interrupt" onclick="sendInterrupt()" style="margin-bottom:2px">
-        Send
-      </button>
-    </div>
   </div>
 
 </main>
@@ -856,7 +964,7 @@ const state = {
   activeBubble: null,
   activeText: '',
   isBusy: false,
-  awaitingReview: false,   // true while round-review-bar is visible
+  awaitingReview: false,
 };
 
 // ── Setup helpers ──────────────────────────────────────────────────────────
@@ -942,7 +1050,7 @@ function initPhaseBar() {
 
 function _addPhaseStep(key, label) {
   const bar = document.getElementById('phase-bar');
-  if (bar.querySelector(`#phase-step-${key}`)) return; // already exists
+  if (bar.querySelector(`#phase-step-${key}`)) return;
 
   if (bar.children.length > 0) {
     const sep = document.createElement('span');
@@ -1034,13 +1142,11 @@ function handleEvent(ev) {
       state.activeBubble = null;
       state.activeSpeaker = null;
       state.activeText = '';
-      // Facilitation done → enable Start Round 1
       if (ev.speaker === 'facilitator') {
         state.phase = 'ready';
         state.isBusy = false;
         updateControls();
       }
-      // Final summary done
       if (ev.speaker === 'summary') {
         state.isBusy = false;
         updateControls();
@@ -1048,7 +1154,6 @@ function handleEvent(ev) {
       break;
 
     case 'round_summary_done':
-      // After debaters finish + round summary streams → show review bar
       state.isBusy = false;
       state.awaitingReview = true;
       showReviewBar(ev.round, ev.proposed_plan || '');
@@ -1207,13 +1312,22 @@ function scrollToBottom() {
   t.scrollTop = t.scrollHeight;
 }
 
-// ── Controls bar ───────────────────────────────────────────────────────────
+// ── Controls ────────────────────────────────────────────────────────────────
 function updateControls() {
   const roundBtn = document.getElementById('btn-start-round');
-  // Round 1 button is only useful before first round starts
+  const topRow = document.getElementById('bottom-top-row');
+
   const canStart1 = !state.isBusy && !state.awaitingReview
     && state.phase === 'ready' && state.currentRound === 0;
+
   roundBtn.disabled = !canStart1;
+
+  // Hide the top row once round 1 has started (it's no longer needed)
+  if (state.currentRound > 0) {
+    topRow.style.display = 'none';
+  } else {
+    topRow.style.display = '';
+  }
 }
 
 async function startRound() {

@@ -72,6 +72,15 @@ class DebateManager:
 
     # ── Public mutators ───────────────────────────────────────────────────────
 
+    def _lang_hint(self) -> str:
+        """Return a language instruction so all AI output matches the topic language."""
+        return (
+            f'\n\nCRITICAL LANGUAGE RULE: The debate topic is "{self.topic}". '
+            "Detect the language of this topic and write your ENTIRE response in that SAME language. "
+            "This includes ALL section headings, labels, bullet points, and prose content. "
+            "Do NOT switch to English if the topic is in another language."
+        )
+
     def add_user_input(self, message: str) -> None:
         with self._lock:
             self.user_inputs.append(message)
@@ -115,6 +124,7 @@ Formally welcome the debaters ({debaters_list}) and invite them to present their
 
 Keep the total under 450 words. Be engaging and neutral."""
 
+        prompt += self._lang_hint()
         self._stream_speaker("facilitator", prompt)
         self._end("ready")
 
@@ -178,6 +188,7 @@ What did this debate accomplish? What should be explored next?
 
 Be specific—reference actual statements from the transcript. Keep each section concise."""
 
+        prompt += self._lang_hint()
         self._stream_speaker("summary", prompt)
         self._end("done")
         self._push({"type": "debate_ended"})
@@ -230,6 +241,7 @@ The single most compelling point made (any debater) and why it advances the deba
 
 Keep under 320 words. Be crisp and actionable — the human moderator will review and may revise this plan before triggering the next round."""
 
+        prompt += self._lang_hint()
         self._stream_speaker("round_summary", prompt)
 
         # Extract the proposed plan section to pre-fill the UI textarea
@@ -329,6 +341,7 @@ You MUST treat this as a direct challenge or contribution to the debate:
 Structure your argument around these questions/areas. Do not go off-topic.
 ---"""
 
+        lang = self._lang_hint()
         return f"""You are participating in **Round {self.current_round}** of a structured debate.
 
 **Topic**: {self.topic}
@@ -344,7 +357,7 @@ Structure your argument around these questions/areas. Do not go off-topic.
 - Acknowledge the strongest opposing argument before refuting it.
 - Keep your response to 2–4 focused paragraphs.
 
-Write your Round {self.current_round} argument now:"""
+Write your Round {self.current_round} argument now:{lang}"""
 
     def _history_for_debater(self) -> str:
         """Condensed history suitable for inclusion in a debater prompt."""

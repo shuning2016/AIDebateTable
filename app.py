@@ -241,7 +241,9 @@ The fundamental trade-offs or disagreements at the heart of this debate.
 ## 🎯 Key Questions for the Debate
 3–4 specific, debatable questions the AI debaters should answer.
 
-Keep the total under 650 words. Be precise and grounded in the search results."""
+Keep the total under 650 words. Be precise and grounded in the search results.
+
+CRITICAL LANGUAGE RULE: The debate topic is "{topic}". Detect the language of this topic and write your ENTIRE response in that SAME language, including ALL section headings, labels, and content. Do NOT switch to English if the topic is in another language."""
 
     def stream_context():
         # Tell the browser whether live search succeeded
