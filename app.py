@@ -160,23 +160,25 @@ def summarize(session_id):
 # ── Context generation ────────────────────────────────────────────────────────
 
 def _search_web(query: str, max_results: int = 8) -> str:
-    """Fetch live search results from DuckDuckGo. Returns empty string on failure."""
+    """Fetch live search results via ddgs (verify=False bypasses Python 3.9 TLS 1.3 limit)."""
+    import logging
+    log = logging.getLogger(__name__)
     try:
         from ddgs import DDGS
-        with DDGS() as ddgs:
+        with DDGS(verify=False) as ddgs:
             results = list(ddgs.text(query, max_results=max_results, region="wt-wt"))
+        if not results:
+            # retry without region constraint (helps with non-Latin scripts)
+            with DDGS(verify=False) as ddgs:
+                results = list(ddgs.text(query, max_results=max_results))
         if not results:
             return ""
         parts = []
         for r in results:
-            title = r.get("title", "")
-            body = r.get("body", "")
-            href = r.get("href", "")
-            parts.append(f"**{title}**\n{body}\nSource: {href}")
+            parts.append(f"**{r.get('title','')}**\n{r.get('body','')}\nSource: {r.get('href','')}")
         return "\n\n".join(parts)
     except Exception as exc:
-        import logging
-        logging.getLogger(__name__).warning("Web search failed: %s", exc)
+        log.warning("Web search failed: %s", exc)
         return ""
 
 
