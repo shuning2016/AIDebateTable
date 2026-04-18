@@ -1036,6 +1036,7 @@ function handleEvent(ev) {
       state.activeText = '';
       // Facilitation done → enable Start Round 1
       if (ev.speaker === 'facilitator') {
+        state.phase = 'ready';
         state.isBusy = false;
         updateControls();
       }
